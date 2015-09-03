@@ -21,7 +21,7 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="BesinessCell" rowHeight="76" id="ZKC-cy-bJR" userLabel="Business Cell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="BesinessCell" rowHeight="76" id="ZKC-cy-bJR" userLabel="Business Cell" customClass="BusinessCell" customModule="YelpClient" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="320" height="76"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ZKC-cy-bJR" id="b0M-f8-KG6">
@@ -82,6 +82,15 @@
                                             <animations/>
                                         </tableViewCellContentView>
                                         <animations/>
+                                        <connections>
+                                            <outlet property="addressLabel" destination="YkZ-Jw-pM4" id="yuP-kB-4KF"/>
+                                            <outlet property="categoriesLabel" destination="u03-cn-glA" id="p6y-fz-8gx"/>
+                                            <outlet property="distanceLabel" destination="o3L-xc-5XC" id="X6R-2s-PCf"/>
+                                            <outlet property="nameLabel" destination="xZa-z5-1zm" id="LuD-0Q-ETn"/>
+                                            <outlet property="ratingImage" destination="0un-Ce-9hl" id="H0X-Zk-RDE"/>
+                                            <outlet property="reviewsCountLabel" destination="dZ6-aK-Ucn" id="gmp-qw-aPC"/>
+                                            <outlet property="thumbImage" destination="mwf-0H-WEA" id="eIf-ae-REa"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
