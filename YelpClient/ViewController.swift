@@ -19,7 +19,13 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
+/*
+    let yelpConsumerKey = "vxKwwcR_NMQ7WaEiQBK_CA"
+    let yelpConsumerSecret = "33QCvh5bIF5jIHR5klQr7RtBDhQ"
+    let yelpToken = "uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV"
+    let yelpTokenSecret = "mqtKIxMIR4iBtBPZCmCLEb-Dz3Y"
+*/
 
 }
 
