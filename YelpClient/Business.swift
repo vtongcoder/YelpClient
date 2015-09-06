@@ -34,7 +34,8 @@ class Business: NSObject {
             if addrArray != nil && addrArray?.count > 0 {
                 address = addrArray![0] as! String
             }
-//            let neighborhood = location["neighborhoods"] as? NSArray
+            let neighborhood = location["neighborhoods"] as? NSArray
+            
             
         }
         
