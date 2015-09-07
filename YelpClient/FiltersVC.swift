@@ -19,6 +19,8 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
   var categories:[[String:String]] = []
   var switchStates = [Int:Bool]()
   var delegate: FiltersVCDelegate?
+  var radiusRage: [Float?]!
+  
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -26,6 +28,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
     self.filtersTableView.rowHeight = UITableViewAutomaticDimension
     
     categories = yelpCategories()
+    radiusRage = [nil, 0.5, 1, 5, 10]
     
   }
   
@@ -61,9 +64,9 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
     case 0:
       return 1
     case 1:
-      return 1
+      return radiusRage.count
     case 2:
-      return 1
+      return 3
     case 3:
       return categories.count + 1
     case 4:
@@ -71,141 +74,98 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
     default:
       break
     }
-    
     return 0
-
+    
   }
   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    /*
-    let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
-    cell.switchLabel.text = categories[indexPath.row]["name"]
-    cell.delegate = self
-    cell.mySwitch.on = switchStates[indexPath.row] ?? false
-    return cell
-    */
+
     switch indexPath.section {
     case 0:
-      // Deal area
-      
+      // Deal
       let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
       
       cell.switchLabel.text = "Offering a Deal"
       cell.delegate = self
       
-      cell.mySwitch.on = categories[indexPath.row]["deal"] as? Bool ?? false
-      
+      cell.mySwitch.on = false
       return cell
-      
     case 1:
-      // Radius area
-      
-      let cell = tableView.dequeueReusableCellWithIdentifier("DropDownCell", forIndexPath: indexPath) as! DropDownCell
-      cell.delegate = self
-      
+      // Radius
+      let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
       // Set label for each cell
       if indexPath.row == 0 {
-        cell.label.text = "Auto"
+        cell.switchLabel.text = "Auto"
+        cell.mySwitch.on = switchStates[indexPath.row] ?? false
       } else {
-        if radii[indexPath.row] == 1 {
-          cell.label.text =  String(format: "%g", radii[indexPath.row]!) + " mile"
+        if radiusRage[indexPath.row] == 1 {
+          cell.switchLabel.text =  String(format: "%0.1f", radiusRage[indexPath.row]!) + " mile"
+          cell.mySwitch.on = switchStates[indexPath.row] ?? false
+
         } else {
-          cell.label.text =  String(format: "%g", radii[indexPath.row]!) + " miles"
+          cell.switchLabel.text =  String(format: "%0.1f", radiusRage[indexPath.row]!) + " miles"
+          cell.mySwitch.on = switchStates[indexPath.row] ?? false
+
         }
       }
-      
-      setRadiusIcon(indexPath.row, iconView: cell.iconView)
-      setRadiusCellVisible(indexPath.row, cell: cell)
-      
       return cell
-      
     case 2:
-      // Sort area
-      
-      let cell = tableView.dequeueReusableCellWithIdentifier("DropDownCell", forIndexPath: indexPath) as! DropDownCell
-      cell.delegate = self
-      
+      // Sort
+      let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
       switch indexPath.row {
       case 0:
-        cell.label.text = "Best Match"
+        cell.switchLabel.text = "Best Match"
+        cell.mySwitch.on = switchStates[indexPath.row] ?? false
         break
       case 1:
-        cell.label.text = "Distance"
+        cell.switchLabel.text = "Distance"
+        cell.mySwitch.on = switchStates[indexPath.row] ?? false
         break
       case 2:
-        cell.label.text = "Rating"
+        cell.switchLabel.text = "Rating"
+        cell.mySwitch.on = switchStates[indexPath.row] ?? false
         break
       default:
         break
       }
       
-      setSortIcon(indexPath.row, iconView: cell.iconView)
-      setSortCellVisible(indexPath.row, cell: cell)
-      
       return cell
       
     case 3:
       // Category area
-      
-      if indexPath.row != categories.count {
-        let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
-        
-        cell.switchLabel.text = categories[indexPath.row]["name"]
-        cell.delegate = self
-        
-        cell.onSwitch.on = switchStates[indexPath.row] ?? false
-        
-        setCategoryCellVisible(indexPath.row, cell: cell)
-        return cell
-      } else {
-        // This is the last row
-        let cell = tableView.dequeueReusableCellWithIdentifier("SeeAllCell", forIndexPath: indexPath) as! SeeAllCell
-        
-        let tapSeeAllCell = UITapGestureRecognizer(target: self, action: "tapSeeAll:")
-        cell.addGestureRecognizer(tapSeeAllCell)
-        
-        
-        return cell
-      }
-      
-    case 4:
-      // Reset row
-      
-      let cell = tableView.dequeueReusableCellWithIdentifier("SeeAllCell", forIndexPath: indexPath) as! SeeAllCell
-      cell.label.text = "Reset filters"
-      cell.label.textColor = UIColor(red: 190/255, green: 38/255, blue: 37/255, alpha: 1.0)
-      let tapResetCell = UITapGestureRecognizer(target: self, action: "tapReset:")
-      cell.addGestureRecognizer(tapResetCell)
-      
+      let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
+      cell.switchLabel.text = categories[indexPath.row]["name"]
+      cell.delegate = self
+      cell.mySwitch.on = switchStates[indexPath.row] ?? false
       return cell
       
     default:
       let cell = UITableViewCell()
       return cell
     }
-
+    
     
   }
   
   // MARK - TableView Section
   
   func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-    return 5
+    return 4
   }
   func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case 0:
-          return  "Deal"
-        case 1:
-          return  "Distance"
-        case 2:
-          return  "Sort By"
-        case 3:
-          return  "Category"
-        default:
-          return nil
-        }
+    switch section {
+    case 0:
+      return  "Deal"
+    case 1:
+      return "Radius"
+    case 2:
+      return  "Sort By"
+    case 3:
+      return  "Category"
+    default:
+      return nil
+    }
   }
-
+  
   func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
     let indexPath = filtersTableView.indexPathForCell(switchCell)!
     switchStates[indexPath.row] = value
