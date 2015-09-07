@@ -20,7 +20,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
   var switchStates = [Int:Bool]()
   var delegate: FiltersVCDelegate?
   var radiusRage: [Float?]!
-  
+  var filters = [String:AnyObject]()
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -44,7 +44,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
   
   @IBAction func onSearch(sender: UIBarButtonItem) {
     dismissViewControllerAnimated(true, completion: nil)
-    var filters = [String:AnyObject]()
+    
     
     var selectedCategories = [String]()
     for (row, isSelected) in switchStates {
@@ -83,11 +83,8 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
     case 0:
       // Deal
       let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
-      
       cell.switchLabel.text = "Offering a Deal"
       cell.delegate = self
-      
-      cell.mySwitch.on = false
       return cell
     case 1:
       // Radius
@@ -95,18 +92,14 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
       // Set label for each cell
       if indexPath.row == 0 {
         cell.switchLabel.text = "Auto"
-        cell.mySwitch.on = switchStates[indexPath.row] ?? false
       } else {
         if radiusRage[indexPath.row] == 1 {
           cell.switchLabel.text =  String(format: "%0.1f", radiusRage[indexPath.row]!) + " mile"
-          cell.mySwitch.on = switchStates[indexPath.row] ?? false
-
         } else {
           cell.switchLabel.text =  String(format: "%0.1f", radiusRage[indexPath.row]!) + " miles"
-          cell.mySwitch.on = switchStates[indexPath.row] ?? false
-
         }
       }
+      cell.mySwitch.on = switchStates[indexPath.row] ?? false
       return cell
     case 2:
       // Sort
@@ -114,20 +107,14 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
       switch indexPath.row {
       case 0:
         cell.switchLabel.text = "Best Match"
-        cell.mySwitch.on = switchStates[indexPath.row] ?? false
-        break
       case 1:
         cell.switchLabel.text = "Distance"
-        cell.mySwitch.on = switchStates[indexPath.row] ?? false
-        break
       case 2:
         cell.switchLabel.text = "Rating"
-        cell.mySwitch.on = switchStates[indexPath.row] ?? false
-        break
       default:
         break
       }
-      
+      cell.mySwitch.on = switchStates[indexPath.row] ?? false
       return cell
       
     case 3:
@@ -168,7 +155,29 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
   
   func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
     let indexPath = filtersTableView.indexPathForCell(switchCell)!
-    switchStates[indexPath.row] = value
+    
+    switch indexPath.section {
+    case 0:
+      self.filters["deal"] = value
+      print("Selected at: \(indexPath.row)")
+    case 1:
+      if indexPath.row == 0 {
+        self.filters["radius"] = nil
+      }
+      else {
+        self.filters["radius"] = radiusRage[indexPath.row]
+      }
+      print("Selected at: \(indexPath.row)")
+    case 2:
+      self.filters["sort"] = indexPath.row // BestMatched = 0, Distance, HighestRated
+      print("Selected at: \(indexPath.row)")
+    case 3:
+      switchStates[indexPath.row] = value
+      print("Selected at: \(indexPath.row)")
+    default:
+      break
+    }
+
     
   }
   

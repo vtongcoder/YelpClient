@@ -14,7 +14,8 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
   let searchBar = UISearchBar()
   var searchActive = false
   var searchBarFilter: [Business]!
-  
+  var filters = [String : AnyObject]()
+
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -27,7 +28,7 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     yelpTableView.rowHeight = UITableViewAutomaticDimension
     yelpTableView.estimatedRowHeight = 120
     
-    Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+    Business.searchWithTerm("Restaurants", sort: nil, categories: ["asianfusion", "burgers"], deals: true, radius: nil) { (businesses: [Business]!, error: NSError!) -> Void in
       self.businesses = businesses
       self.yelpTableView.reloadData()
     }
@@ -58,10 +59,26 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     
   }
   func filtersVC(filtersVC: FiltersVC, didUpdateFilters filters: [String : AnyObject]) {
-    
+    var term: String?
+    if !searchBar.text!.isEmpty {
+      term = searchBar.text
+    } else {
+      term = nil
+    }
+
     let categories = filters["categories"] as? [String]
-    
-    Business.searchWithTerm("Restaurants", sort: nil, categories: categories, deals: nil) { (businesses: [Business]!, error: NSError!) -> Void in
+    let sort = filters["sort"] as? Int
+    let deal = filters["deal"] as? Bool
+    let radius = filters["radius"] as! Float?
+    // Update for filters in this VC
+    // Set filters in this view controller
+    self.filters["sort"] = sort
+    self.filters["categories"] = categories
+    self.filters["deal"] = deal
+    self.filters["radius"] = radius
+
+
+    Business.searchWithTerm(term!, sort: sort, categories: categories, deals: deal, radius: radius) { (businesses: [Business]!, error: NSError!) -> Void in
       self.businesses = businesses
       self.yelpTableView.reloadData()
     }
@@ -93,14 +110,13 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     if !searchBar.text!.isEmpty {
       term = searchBar.text
     }
+    let sort = filters["sort"] as? Int
+    let categories = self.filters["categories"] as? [String]
+    let deal = self.filters["deal"] as? Bool
+    let radius = self.filters["radius"] as! Float?
+
     
-//    let sort = filters["sort"] as? Int
-//    let categories = self.filters["categories"] as? [String]
-//    let deal = self.filters["deal"] as? Bool
-//    let radius = self.filters["radius"] as! Float?
-//    let offset = businesses.count
-    
-    Business.searchWithTerm(term!, sort: nil, categories: nil, deals: nil) { (businesses : [Business]!, error: NSError!) -> Void in
+    Business.searchWithTerm(term!, sort: sort, categories: categories, deals: deal, radius: radius) { (businesses : [Business]!, error: NSError!) -> Void in
       self.businesses = businesses
       self.yelpTableView.reloadData()
       

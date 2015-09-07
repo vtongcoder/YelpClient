@@ -47,12 +47,12 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         
     }
     func searchWithTerm(term: String, completion:([Business]!, NSError!) -> Void ) -> AFHTTPRequestOperation{
-        return searchWithTerm(term, sort: nil, categories: nil, deals: nil, completion: completion)
+      return searchWithTerm(term, sort: nil, categories: nil, deals: nil, radius: nil, completion: completion)
     }
-    func searchWithTerm(term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, completion: ([Business]!, NSError!) -> Void) -> AFHTTPRequestOperation{
+  func searchWithTerm(term: String, sort: Int?, categories: [String]?, deals: Bool?, radius: Float?, completion: ([Business]!, NSError!) -> Void) -> AFHTTPRequestOperation{
         var parameters: [String: AnyObject] = ["term":term, "ll": "37.785771,-122.406165"]
         if sort != nil {
-            parameters["sort"] = sort!.rawValue
+            parameters["sort"] = sort
         }
         if categories != nil && categories!.count > 0 {
             parameters["category_filter"] = categories!.joinWithSeparator(",")
