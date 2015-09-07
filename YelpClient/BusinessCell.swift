@@ -21,6 +21,12 @@ class BusinessCell: UITableViewCell {
     var business: Business! {
         didSet{
             nameLabel.text = business.name
+            categoriesLabel.text = business.categories
+            addressLabel.text      = business.address
+            distanceLabel.text      = business.distance
+            reviewsCountLabel.text = "\(business.reviewCount) Reviews"
+            
+            
         }
     }
     

@@ -15,7 +15,14 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+            self.businesses = businesses
+            
+            for business in businesses {
+                print(business.name!)
+                print(business.address!)
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -32,8 +39,7 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("BusinessCell", forIndexPath: indexPath) as! BusinessCell
-        
-        cell
+        cell.business = businesses![indexPath.row]
         return cell
         
         
