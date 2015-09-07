@@ -24,17 +24,24 @@ class BusinessCell: UITableViewCell {
             categoriesLabel.text = business.categories
             addressLabel.text      = business.address
             distanceLabel.text      = business.distance
-            reviewsCountLabel.text = "\(business.reviewCount) Reviews"
-            
-            
+            reviewsCountLabel.text = "\(business.reviewCount!) Reviews"
+            thumbImage.setImageWithURL(business.imageURL)
+            ratingImage.setImageWithURL(business.ratingImageURL)
         }
     }
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        thumbImage.layer.cornerRadius = 3
+        nameLabel.preferredMaxLayoutWidth = nameLabel.frame.size.width
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        nameLabel.preferredMaxLayoutWidth = nameLabel.frame.size.width
+
+    }
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

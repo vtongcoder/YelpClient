@@ -15,14 +15,12 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+        yelpTableView.rowHeight = UITableViewAutomaticDimension
+        yelpTableView.estimatedRowHeight = 120
+        Business.searchWithTerm("Thai", completion: { (businesses : [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
-            
-            for business in businesses {
-                print(business.name!)
-                print(business.address!)
-            }
-        }
+            self.yelpTableView.reloadData()
+        })
     }
 
     override func didReceiveMemoryWarning() {
