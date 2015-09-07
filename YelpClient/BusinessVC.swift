@@ -8,22 +8,23 @@
 
 import UIKit
 
-class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersVCDelegate {
+class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersVCDelegate, UISearchBarDelegate {
     var businesses: [Business]!
     @IBOutlet weak var yelpTableView: UITableView!
-    
+  
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let searchBar = UISearchBar()
+        searchBar.sizeToFit()
+        searchBar.placeholder = "Restaurant"
+      
+        navigationItem.titleView = searchBar
+      
         yelpTableView.rowHeight = UITableViewAutomaticDimension
         yelpTableView.estimatedRowHeight = 120
-        /*
-        Business.searchWithTerm("Thai", completion: { (businesses : [Business]!, error: NSError!) -> Void in
-            self.businesses = businesses
-            self.yelpTableView.reloadData()
-        })
-*/
-        Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+          
+              Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
             self.yelpTableView.reloadData()
         }
@@ -55,12 +56,20 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     }
   func filtersVC(filtersVC: FiltersVC, didUpdateFilters filters: [String : AnyObject]) {
     
-      var categories = filters["categories"] as? [String]
+      let categories = filters["categories"] as? [String]
     
     Business.searchWithTerm("Restaurants", sort: nil, categories: categories, deals: nil) { (businesses: [Business]!, error: NSError!) -> Void in
       self.businesses = businesses
       self.yelpTableView.reloadData()
     }
     }
+  // SearchBar
+  
+  
+  func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+    
+    searchBar.enablesReturnKeyAutomatically = false
+    searchBar.showsCancelButton = true
+  }
   
 }
