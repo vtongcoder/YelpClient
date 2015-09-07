@@ -17,10 +17,20 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
         yelpTableView.rowHeight = UITableViewAutomaticDimension
         yelpTableView.estimatedRowHeight = 120
+        /*
         Business.searchWithTerm("Thai", completion: { (businesses : [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
             self.yelpTableView.reloadData()
         })
+*/
+        Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+            self.businesses = businesses
+            self.yelpTableView.reloadData()
+//            for business in businesses {
+//                print(business.name!)
+//                print(business.address!)
+//            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -39,8 +49,6 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCellWithIdentifier("BusinessCell", forIndexPath: indexPath) as! BusinessCell
         cell.business = businesses![indexPath.row]
         return cell
-        
-        
     }
     /*
     // MARK: - Navigation
