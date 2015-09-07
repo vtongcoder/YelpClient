@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, FiltersVCDelegate {
     var businesses: [Business]!
     @IBOutlet weak var yelpTableView: UITableView!
     
@@ -26,10 +26,6 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
             self.yelpTableView.reloadData()
-//            for business in businesses {
-//                print(business.name!)
-//                print(business.address!)
-//            }
         }
     }
 
@@ -50,14 +46,21 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         cell.business = businesses![indexPath.row]
         return cell
     }
-    /*
-    // MARK: - Navigation
-
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        let navigationController = segue.destinationViewController as! UINavigationController
+        let filtersVC = navigationController.topViewController as! FiltersVC
+        filtersVC.delegate = self
+      
     }
-    */
-
+  func filtersVC(filtersVC: FiltersVC, didUpdateFilters filters: [String : AnyObject]) {
+    
+      var categories = filters["categories"] as? [String]
+    
+    Business.searchWithTerm("Restaurants", sort: nil, categories: categories, deals: nil) { (businesses: [Business]!, error: NSError!) -> Void in
+      self.businesses = businesses
+      self.yelpTableView.reloadData()
+    }
+    }
+  
 }

@@ -8,10 +8,18 @@
 
 import UIKit
 
-class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+@objc protocol FiltersVCDelegate{
+    optional func filtersVC(filtersVC: FiltersVC, didUpdateFilters filters: [String: AnyObject])
+    
+}
+
+class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, SwitchCellDelegate {
 
     @IBOutlet weak var filtersTableView: UITableView!
     var categories:[[String:String]] = []
+    var switchStates = [Int:Bool]()
+    var delegate: FiltersVCDelegate?
+  
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -31,6 +39,19 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     @IBAction func onSearch(sender: UIBarButtonItem) {
         dismissViewControllerAnimated(true, completion: nil)
+      var filters = [String:AnyObject]()
+      
+      var selectedCategories = [String]()
+      for (row, isSelected) in switchStates {
+        if isSelected {
+          selectedCategories.append(categories[row]["code"]!)
+        }
+        if selectedCategories.count > 0 {
+          filters["categories"] = selectedCategories
+        }
+      }
+      delegate?.filtersVC?(self, didUpdateFilters: filters)
+      
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -38,10 +59,21 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("SwitchCell", forIndexPath: indexPath) as! SwitchCell
+        cell.switchLabel.text = categories[indexPath.row]["name"]
+        cell.delegate = self
+        cell.mySwitch.on = switchStates[indexPath.row] ?? false
+        
+        
         return cell
         
         
     }
+    func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
+        let indexPath = filtersTableView.indexPathForCell(switchCell)!
+        switchStates[indexPath.row] = value
+        
+    }
+    
 
     
     func yelpCategories() -> [[String:String]]{
