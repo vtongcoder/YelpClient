@@ -62,10 +62,10 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var term: String?
     if !searchBar.text!.isEmpty {
       term = searchBar.text
+      self.filters["term"] = term
     } else {
       term = nil
     }
-
     let categories = filters["categories"] as? [String]
     let sort = filters["sort"] as? Int
     let deal = filters["deal"] as? Bool
@@ -78,7 +78,11 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     self.filters["radius"] = radius
 
 
-    Business.searchWithTerm(term!, sort: sort, categories: categories, deals: deal, radius: radius) { (businesses: [Business]!, error: NSError!) -> Void in
+//    Business.searchWithTerm(term!, sort: sort, categories: categories, deals: deal, radius: radius) { (businesses: [Business]!, error: NSError!) -> Void in
+//      self.businesses = businesses
+//      self.yelpTableView.reloadData()
+//    }
+    Business.searchWithTerm(term , sort: sort, categories: categories, deals: deal, radius: radius) { (businesses: [Business]!, error: NSError!) -> Void in
       self.businesses = businesses
       self.yelpTableView.reloadData()
     }
@@ -109,6 +113,7 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var term: String?
     if !searchBar.text!.isEmpty {
       term = searchBar.text
+      self.filters["term"] = term
     }
     let sort = filters["sort"] as? Int
     let categories = self.filters["categories"] as? [String]

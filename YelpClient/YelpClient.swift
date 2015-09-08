@@ -16,64 +16,70 @@ let yelpToken = "uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV"
 let yelpTokenSecret = "mqtKIxMIR4iBtBPZCmCLEb-Dz3Y"
 
 enum YelpSortMode: Int {
-    case BestMatched = 0, Distance, HighestRated
-    
+  case BestMatched = 0, Distance, HighestRated
+  
 }
 class YelpClient: BDBOAuth1RequestOperationManager {
-    var accessToken: String!
-    var accessSecret: String!
+  var accessToken: String!
+  var accessSecret: String!
+  
+  class var sharedInstance: YelpClient {
+    struct Static {
+      static var token: dispatch_once_t = 0
+      static var instance: YelpClient? = nil
+      
+    }
+    dispatch_once(&Static.token){
+      Static.instance = YelpClient(consumKey: yelpConsumerKey, consumSecret: yelpConsumerSecret, accessToken: yelpToken, accessSecret: yelpTokenSecret)
+    }
+    return Static.instance!
+  }
+  required init(coder aDecoder: NSCoder){
+    super.init(coder: aDecoder)!
+  }
+  init(consumKey key: String!, consumSecret secret: String!, accessToken: String!, accessSecret: String!){
+    self.accessToken = accessToken
+    self.accessSecret = accessSecret
+    let baseUrl = NSURL(string: "http://api.yelp.com/v2/")
+    super.init(baseURL: baseUrl, consumerKey: key, consumerSecret: secret)
+    let token = BDBOAuth1Credential(token: accessToken, secret: accessSecret, expiration: nil)
+    self.requestSerializer.saveAccessToken(token)
     
-    class var sharedInstance: YelpClient {
-        struct Static {
-            static var token: dispatch_once_t = 0
-            static var instance: YelpClient? = nil
-            
-        }
-        dispatch_once(&Static.token){
-            Static.instance = YelpClient(consumKey: yelpConsumerKey, consumSecret: yelpConsumerSecret, accessToken: yelpToken, accessSecret: yelpTokenSecret)
-        }
-        return Static.instance!
+  }
+  func searchWithTerm(term: String?, completion:([Business]!, NSError!) -> Void ) -> AFHTTPRequestOperation{
+    return searchWithTerm(term, sort: nil, categories: nil, deals: nil, radius: nil, completion: completion)
+  }
+  func searchWithTerm(term: String?, sort: Int?, categories: [String]?, deals: Bool?, radius: Float?, completion: ([Business]!, NSError!) -> Void) -> AFHTTPRequestOperation{
+    var parameters: [String: AnyObject] = ["ll": "37.785771,-122.406165"]
+    if term != nil {
+      parameters["term"] = term!
     }
-    required init(coder aDecoder: NSCoder){
-        super.init(coder: aDecoder)!
+    if sort != nil {
+      parameters["sort"] = sort!
     }
-    init(consumKey key: String!, consumSecret secret: String!, accessToken: String!, accessSecret: String!){
-        self.accessToken = accessToken
-        self.accessSecret = accessSecret
-        let baseUrl = NSURL(string: "http://api.yelp.com/v2/")
-        super.init(baseURL: baseUrl, consumerKey: key, consumerSecret: secret)
-        let token = BDBOAuth1Credential(token: accessToken, secret: accessSecret, expiration: nil)
-        self.requestSerializer.saveAccessToken(token)
-        
-    }
-    func searchWithTerm(term: String, completion:([Business]!, NSError!) -> Void ) -> AFHTTPRequestOperation{
-      return searchWithTerm(term, sort: nil, categories: nil, deals: nil, radius: nil, completion: completion)
-    }
-  func searchWithTerm(term: String, sort: Int?, categories: [String]?, deals: Bool?, radius: Float?, completion: ([Business]!, NSError!) -> Void) -> AFHTTPRequestOperation{
-        var parameters: [String: AnyObject] = ["term":term, "ll": "37.785771,-122.406165"]
-        if sort != nil {
-            parameters["sort"] = sort
-        }
-        if categories != nil && categories!.count > 0 {
-            parameters["category_filter"] = categories!.joinWithSeparator(",")
-        }
-        
-        if deals != nil {
-            parameters["deals_filter"] = deals!
-        }
-        print(parameters)
-        
-        return self.GET("search", parameters: parameters, success: {(operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
-            let dictionaries = response["businesses"] as? [NSDictionary]
-            if dictionaries != nil{
-                completion(Business.businesses(dictionaries!), nil)
-            }
-        },
-            failure: {(operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
-                completion(nil, error)
-            }
-        )
+    if categories != nil && categories!.count > 0 {
+      parameters["category_filter"] = categories!.joinWithSeparator(",")
     }
     
-
+    if deals != nil {
+      parameters["deals_filter"] = deals!
+    }
+    if radius != nil {
+      parameters["radius_filter"] = radius!
+    }
+    print(parameters)
+    
+    return self.GET("search", parameters: parameters, success: {(operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
+      let dictionaries = response["businesses"] as? [NSDictionary]
+      if dictionaries != nil{
+        completion(Business.businesses(dictionaries!), nil)
+      }
+      },
+      failure: {(operation: AFHTTPRequestOperation!, error: NSError!) -> Void in
+        completion(nil, error)
+      }
+    )
+  }
+  
+  
 }

@@ -100,6 +100,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
         }
       }
       cell.mySwitch.on = switchStates[indexPath.row] ?? false
+      cell.delegate = self
       return cell
     case 2:
       // Sort
@@ -115,6 +116,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
         break
       }
       cell.mySwitch.on = switchStates[indexPath.row] ?? false
+      cell.delegate = self
       return cell
       
     case 3:
@@ -123,6 +125,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
       cell.switchLabel.text = categories[indexPath.row]["name"]
       cell.delegate = self
       cell.mySwitch.on = switchStates[indexPath.row] ?? false
+      cell.delegate = self
       return cell
       
     default:
@@ -159,7 +162,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
     switch indexPath.section {
     case 0:
       self.filters["deal"] = value
-      print("Selected at: \(indexPath.row)")
+      print("Selected deal: \(value)")
     case 1:
       if indexPath.row == 0 {
         self.filters["radius"] = nil
@@ -167,13 +170,13 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
       else {
         self.filters["radius"] = radiusRage[indexPath.row]
       }
-      print("Selected at: \(indexPath.row)")
+      print("Selected Radius at: \(value)")
     case 2:
       self.filters["sort"] = indexPath.row // BestMatched = 0, Distance, HighestRated
-      print("Selected at: \(indexPath.row)")
+      print("Selected Sort at: \(indexPath.row)")
     case 3:
       switchStates[indexPath.row] = value
-      print("Selected at: \(indexPath.row)")
+      print("Selected category:\(indexPath.row)")
     default:
       break
     }
