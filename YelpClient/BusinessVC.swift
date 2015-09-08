@@ -53,24 +53,18 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
   }
   // In a storyboard-based application, you will often want to do a little preparation before navigation
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-//    let navigationController = segue.destinationViewController as! UINavigationController
-//    
-//    if navigationController.topViewController is FiltersVC {
-//      let filtersViewController = navigationController.topViewController as! FiltersVC
-//      filtersViewController.delegate = self
-//      
-//    } else if navigationController.topViewController is BusinessDetailVC {
-//      let detailViewController = navigationController.topViewController as! BusinessDetailVC
-//      var indexPath: AnyObject!
-//      indexPath = yelpTableView.indexPathForCell(sender as! UITableViewCell)
-//      detailViewController.selectedBusiness = businesses[indexPath!.row]
-//    }
-    let detailViewController = segue.destinationViewController as! BusinessDetailVC
-    var indexPath: AnyObject!
-    indexPath = yelpTableView.indexPathForCell(sender as! UITableViewCell)
-    detailViewController.selectedBusiness = businesses[indexPath!.row]
+    //    let navigationController = segue.destinationViewController as! UINavigationController
+    if sender is UIBarButtonItem {
+      let navigationController = segue.destinationViewController as! UINavigationController
+      let filtersViewController = navigationController.topViewController as! FiltersVC
+      filtersViewController.delegate = self
+    } else {
+      let detailViewController = segue.destinationViewController as! BusinessDetailVC
+      var indexPath: AnyObject!
+      indexPath = yelpTableView.indexPathForCell(sender as! UITableViewCell)
+      detailViewController.selectedBusiness = businesses[indexPath!.row]
+    }
 
-    
   }
   func filtersVC(filtersVC: FiltersVC, didUpdateFilters filters: [String : AnyObject]) {
     var term: String?

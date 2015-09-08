@@ -8,7 +8,7 @@
 
 import UIKit
 import MapKit
-class BusinessDetailVC: UIViewController {
+class BusinessDetailVC: UIViewController, MKMapViewDelegate {
   
   @IBOutlet weak var thumbImage: UIImageView!
   @IBOutlet weak var ratingImage: UIImageView!
@@ -20,6 +20,7 @@ class BusinessDetailVC: UIViewController {
   @IBOutlet weak var mapView: MKMapView!
   
   var selectedBusiness: Business!
+  var userLocation: UserLocation = UserLocation()
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -30,7 +31,11 @@ class BusinessDetailVC: UIViewController {
     reviewsLabel.text = "\(selectedBusiness.reviewCount!) views"
     addressLabel.text = selectedBusiness.address
     categoryLabel.text = selectedBusiness.categories
-    distanceLabel.text  = selectedBusiness.distance! + "(  \((selectedBusiness.distanceMeters! as Float)/1000) km)"
+    distanceLabel.text  = selectedBusiness.distance! + String(format: " (%.2f km)", ((selectedBusiness.distanceMeters! as Float)/1000))
+//    let distance = self.selectedBusiness.location.distanceFromLocation(self.userLocation.location)
+//    self.distanceLabel.text = String(format: "%.1f mi", distance / 1609.344)
+    self.distanceLabel.sizeToFit()
+
     
   }
   
@@ -40,10 +45,11 @@ class BusinessDetailVC: UIViewController {
   }
   
   func initMapView(){
+    self.mapView.delegate = self
     // 1
     let location = CLLocationCoordinate2D(
-      latitude: 51.50007773,
-      longitude: -0.1246402
+      latitude: self.selectedBusiness.latitude!,
+      longitude: self.selectedBusiness.longitude!
     )
     // 2
     let span = MKCoordinateSpanMake(0.05, 0.05)
@@ -53,19 +59,23 @@ class BusinessDetailVC: UIViewController {
     //3
     let annotation = MKPointAnnotation()
     annotation.coordinate = location
-    annotation.title = "Big Ben"
-    annotation.subtitle = "London"
+//    annotation.title = "Big Ben"
+//    annotation.subtitle = "London"
     mapView.addAnnotation(annotation)
+    self.mapView.setRegion(region, animated: true)
+    
   }
-  
-  /*
-  // MARK: - Navigation
-  
-  // In a storyboard-based application, you will often want to do a little preparation before navigation
-  override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-  // Get the new view controller using segue.destinationViewController.
-  // Pass the selected object to the new view controller.
+  func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    if !(annotation is MKPointAnnotation) {
+      return nil
+    }
+    
+    var view = mapView.dequeueReusableAnnotationViewWithIdentifier("pin") as? MKPinAnnotationView
+    if view == nil {
+      view = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+      view!.canShowCallout = false
+    }
+    return view
   }
-  */
   
 }
