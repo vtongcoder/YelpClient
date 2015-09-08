@@ -170,7 +170,6 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
   
   func switchCell(switchCell: SwitchCell, didChangeValue value: Bool) {
     let indexPath = filtersTableView.indexPathForCell(switchCell)!
-    
     switch indexPath.section {
     case 0:
       self.filters["deal"] = value
@@ -192,14 +191,7 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
     default:
       break
     }
-
-    
   }
-  
-  
-  
-  
-  
   
   func yelpCategories() -> [[String:String]]{
     return [["name" : "Afghan", "code": "afghani"],
