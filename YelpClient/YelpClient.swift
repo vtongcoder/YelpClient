@@ -65,7 +65,7 @@ class YelpClient: BDBOAuth1RequestOperationManager {
       parameters["deals_filter"] = deals!
     }
     if radius != nil {
-      parameters["radius_filter"] = radius!
+      parameters["radius_filter"] = radius! * 1609 // convert to meters, 1 miles = 1609 meter
     }
     print(parameters)
     

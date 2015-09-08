@@ -15,7 +15,7 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
   var searchActive = false
   var searchBarFilter: [Business]!
   var filters = [String : AnyObject]()
-
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -76,12 +76,12 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     self.filters["categories"] = categories
     self.filters["deal"] = deal
     self.filters["radius"] = radius
-
-
-//    Business.searchWithTerm(term!, sort: sort, categories: categories, deals: deal, radius: radius) { (businesses: [Business]!, error: NSError!) -> Void in
-//      self.businesses = businesses
-//      self.yelpTableView.reloadData()
-//    }
+    
+    
+    //    Business.searchWithTerm(term!, sort: sort, categories: categories, deals: deal, radius: radius) { (businesses: [Business]!, error: NSError!) -> Void in
+    //      self.businesses = businesses
+    //      self.yelpTableView.reloadData()
+    //    }
     Business.searchWithTerm(term , sort: sort, categories: categories, deals: deal, radius: radius) { (businesses: [Business]!, error: NSError!) -> Void in
       self.businesses = businesses
       self.yelpTableView.reloadData()
@@ -93,7 +93,7 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
   func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
     
     searchBar.enablesReturnKeyAutomatically = true
-//    searchBar.showsCancelButton = true
+    //    searchBar.showsCancelButton = true
   }
   func searchBarSearchButtonClicked(searchBar: UISearchBar) {
     self.searchBar.endEditing(true)
@@ -113,20 +113,36 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
     var term: String?
     if !searchBar.text!.isEmpty {
       term = searchBar.text
-      self.filters["term"] = term
     }
     let sort = filters["sort"] as? Int
     let categories = self.filters["categories"] as? [String]
     let deal = self.filters["deal"] as? Bool
     let radius = self.filters["radius"] as! Float?
-
     
+    if term != nil {
     Business.searchWithTerm(term!, sort: sort, categories: categories, deals: deal, radius: radius) { (businesses : [Business]!, error: NSError!) -> Void in
-      self.businesses = businesses
-      self.yelpTableView.reloadData()
-      
+      if error == nil {
+        self.businesses = businesses
+        if self.businesses.count == 0 {
+          self.searchNoResultAlert()
+          self.yelpTableView.hidden = true
+        } else {
+          self.yelpTableView.hidden = false
+          self.yelpTableView.reloadData()
+        }
+      } else {
+        print("Search Error: \(error.description)")
+      }
     }
-
+    }
+    
   }
-  
+  func searchNoResultAlert(){
+    let actionSheetController: UIAlertController = UIAlertController(title: "Searching❗️", message: "No Search Result found.Try with another. Thank you!", preferredStyle: .Alert)
+    let okButton: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Cancel) {action -> Void in
+      //      self.loadingIndicator.stopAnimating()
+    }
+    actionSheetController.addAction(okButton)
+    self.presentViewController(actionSheetController, animated: true, completion: nil)
+  }
 }

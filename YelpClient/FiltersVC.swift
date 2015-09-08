@@ -135,7 +135,19 @@ class FiltersVC: UIViewController, UITableViewDataSource, UITableViewDelegate, S
     
     
   }
-  
+  func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    switch indexPath.section {
+    case 1:
+      for var rowIndex = 0; rowIndex < 3; rowIndex++ {
+        if indexPath.row != rowIndex {
+          let cell = tableView.cellForRowAtIndexPath(indexPath) as! SwitchCell
+          cell.mySwitch.on = false
+        }
+      }
+    default: break
+      
+    }
+  }
   // MARK - TableView Section
   
   func numberOfSectionsInTableView(tableView: UITableView) -> Int {
