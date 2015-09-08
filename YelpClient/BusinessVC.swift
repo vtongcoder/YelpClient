@@ -54,8 +54,37 @@ class BusinessVC: UIViewController, UITableViewDataSource, UITableViewDelegate, 
   // In a storyboard-based application, you will often want to do a little preparation before navigation
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
     let navigationController = segue.destinationViewController as! UINavigationController
-    let filtersVC = navigationController.topViewController as! FiltersVC
-    filtersVC.delegate = self
+    
+    if navigationController.topViewController is FiltersVC {
+      let filtersViewController = navigationController.topViewController as! FiltersVC
+      filtersViewController.delegate = self
+      
+    } else if navigationController.topViewController is BusinessDetailVC {
+      let detailViewController = navigationController.topViewController as! BusinessDetailVC
+      
+      
+//      var indexPath: AnyObject!
+//      indexPath = tableView.indexPathForCell(sender as! UITableViewCell)
+//      
+//      detailViewController.thumbImage = businesses[indexPath!.row]
+    }
+    
+//    let filtersVC = navigationController.topViewController as! FiltersVC
+//    filtersVC.delegate = self
+//
+//    if navigationController.viewControllers[0] is MapViewController {
+//      let controller = navigationController.viewControllers[0] as MapViewController
+//      controller.delegate = self
+//    }
+    
+//    if segue.destinationViewController is UINavigationController {
+//      let navigationController = segue.destinationViewController as! UINavigationController
+//      if navigationController.viewControllers[0] is BusinessDetailVC {
+//        let controller = navigationController.viewControllers[0] as BusinessDetailVC
+//        controller.delegate = self
+//      }
+//    }
+
     
   }
   func filtersVC(filtersVC: FiltersVC, didUpdateFilters filters: [String : AnyObject]) {
