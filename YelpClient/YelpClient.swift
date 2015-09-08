@@ -6,6 +6,8 @@
 //  Copyright © 2015 DanTong. All rights reserved.
 //
 
+// For additional parameters, see http://www.yelp.com/developers/documentation/v2/search_api
+
 import UIKit
 
 
