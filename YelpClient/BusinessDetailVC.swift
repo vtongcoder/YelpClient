@@ -44,6 +44,7 @@ class BusinessDetailVC: UIViewController, MKMapViewDelegate {
     // Dispose of any resources that can be recreated.
   }
   
+  
   func initMapView(){
     self.mapView.delegate = self
     // 1

@@ -87,5 +87,6 @@ class UserLocation: NSObject, CLLocationManagerDelegate {
             return CLLocation(latitude: self.latitude, longitude: self.longitude)
         }
     }
+  
 
 }
